@@ -11,12 +11,12 @@ import (
 )
 
 const (
-	colorEmpty   = "#ebedf0"
-	colorLow     = "#9be9a8"
-	colorMid     = "#40c463"
-	colorHigh    = "#30a14e"
-	colorMax     = "#216e39"
-	colorError   = "#9e9e9e"
+	colorEmpty   = "#2c303b"
+	colorLow     = "#216e39"
+	colorMid     = "#30a14e"
+	colorHigh    = "#40c463"
+	colorMax     = "#9be9a8"
+	colorError   = "#ff0000"
 	iconSize     = 32
 	circleRadius = 11.0
 )
