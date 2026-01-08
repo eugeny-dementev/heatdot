@@ -1,0 +1,24 @@
+version: 2
+project_name: heatdot
+
+builds:
+  - id: heatdot-darwin
+    main: ./cmd/heatdot
+    binary: heatdot
+    goos:
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    env:
+      - CGO_ENABLED=1
+    ldflags:
+      - -s -w
+
+archives:
+  - name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    formats:
+      - tar.gz
+
+checksum:
+  disable: true
