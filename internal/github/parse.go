@@ -27,6 +27,10 @@ func ParseCountForDate(html []byte, date time.Time) (int, error) {
 		return count, nil
 	}
 
+	if count, ok := findCountByTooltip(doc, dateStr); ok {
+		return count, nil
+	}
+
 	if count, ok := findCountByAriaLabel(doc, date); ok {
 		return count, nil
 	}
@@ -98,6 +102,69 @@ func findCountByAriaLabel(doc *goquery.Document, date time.Time) (int, bool) {
 	})
 
 	return count, ok
+}
+
+func findCountByTooltip(doc *goquery.Document, dateStr string) (int, bool) {
+	counts := map[string]int{}
+
+	doc.Find("tool-tip[for]").Each(func(_ int, s *goquery.Selection) {
+		target, exists := s.Attr("for")
+		if !exists {
+			return
+		}
+		text := strings.TrimSpace(s.Text())
+		if text == "" {
+			return
+		}
+		if count, ok := parseTooltipCount(text); ok {
+			counts[target] = count
+		}
+	})
+
+	if len(counts) == 0 {
+		return 0, false
+	}
+
+	var (
+		count int
+		ok    bool
+	)
+
+	doc.Find("[data-date][id]").EachWithBreak(func(_ int, s *goquery.Selection) bool {
+		dateVal, exists := s.Attr("data-date")
+		if !exists || dateVal != dateStr {
+			return true
+		}
+		id, exists := s.Attr("id")
+		if !exists {
+			return true
+		}
+		mapped, exists := counts[id]
+		if !exists {
+			return true
+		}
+		count = mapped
+		ok = true
+		return false
+	})
+
+	return count, ok
+}
+
+func parseTooltipCount(text string) (int, bool) {
+	countMatch := ariaCountRe.FindStringSubmatch(text)
+	if len(countMatch) < 2 {
+		return 0, false
+	}
+	countStr := strings.ToLower(countMatch[1])
+	if countStr == "no" {
+		return 0, true
+	}
+	count, err := strconv.Atoi(countMatch[1])
+	if err != nil {
+		return 0, false
+	}
+	return count, true
 }
 
 func parseAriaLabel(label string, loc *time.Location) (int, time.Time, bool) {
