@@ -36,7 +36,7 @@ go build ./cmd/heatdot
 ### Cross-compile examples
 ```bash
 # Windows
-env GOOS=windows GOARCH=amd64 go build -o heatdot.exe ./cmd/heatdot
+env GOOS=windows GOARCH=amd64 go build -ldflags "-H=windowsgui" -o heatdot.exe ./cmd/heatdot
 
 # macOS
 env GOOS=darwin GOARCH=arm64 go build -o heatdot ./cmd/heatdot
@@ -60,7 +60,7 @@ Run with logging enabled:
 ./heatdot -debug
 ```
 
-If `-debug` is set and `-log-file` is omitted, logs go to `<config-dir>/heatdot.log`.
+By default logs are written to `heatdot.log` in the same directory as `config.json`.
 
 Optional custom log file:
 ```bash
