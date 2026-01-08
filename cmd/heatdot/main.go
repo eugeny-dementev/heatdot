@@ -6,30 +6,42 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"runtime"
 
 	"heatdot/internal/app"
 	"heatdot/internal/config"
+	"heatdot/internal/util"
 )
 
 func main() {
+	util.HideConsole()
+
 	logFile := flag.String("log-file", "", "Path to log file")
 	debug := flag.Bool("debug", false, "Enable debug logging")
 	flag.Parse()
 
 	logger := log.New(os.Stdout, "", log.LstdFlags)
-	if *debug && *logFile == "" {
-		if path, err := config.ConfigPath(); err == nil {
-			*logFile = filepath.Join(filepath.Dir(path), "heatdot.log")
+
+	logPath := *logFile
+	if logPath == "" {
+		if cfgPath, err := config.ConfigPath(); err == nil {
+			logPath = filepath.Join(filepath.Dir(cfgPath), "heatdot.log")
+		} else {
+			logger.Printf("failed to resolve config dir: %v", err)
 		}
 	}
 
-	if *logFile != "" {
-		if err := os.MkdirAll(filepath.Dir(*logFile), 0o755); err != nil {
-			logger.Printf("failed to create log dir for %s: %v", *logFile, err)
-		} else if file, err := os.OpenFile(*logFile, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0o644); err != nil {
-			logger.Printf("failed to open log file %s: %v", *logFile, err)
+	if logPath != "" {
+		if err := os.MkdirAll(filepath.Dir(logPath), 0o755); err != nil {
+			logger.Printf("failed to create log dir for %s: %v", logPath, err)
+		} else if file, err := os.OpenFile(logPath, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0o644); err != nil {
+			logger.Printf("failed to open log file %s: %v", logPath, err)
 		} else {
-			logger.SetOutput(io.MultiWriter(os.Stdout, file))
+			if runtime.GOOS == "windows" {
+				logger.SetOutput(file)
+			} else {
+				logger.SetOutput(io.MultiWriter(os.Stdout, file))
+			}
 		}
 	}
 
