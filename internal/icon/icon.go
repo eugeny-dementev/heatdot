@@ -18,7 +18,8 @@ const (
 	colorMax     = "#9be9a8"
 	colorError   = "#ff0000"
 	iconSize     = 32
-	circleRadius = 11.0
+	squareSize   = 20.0
+	cornerRadius = 2.5
 )
 
 func ForCount(count int) ([]byte, error) {
@@ -46,13 +47,40 @@ func colorForCount(count int) color.NRGBA {
 
 func dotPNG(dot color.NRGBA) ([]byte, error) {
 	img := image.NewNRGBA(image.Rect(0, 0, iconSize, iconSize))
-	center := float64(iconSize-1) / 2
-	r2 := circleRadius * circleRadius
+	center := float64(iconSize) / 2
+	half := squareSize / 2
+	left := center - half
+	right := center + half
+	top := center - half
+	bottom := center + half
+	r2 := cornerRadius * cornerRadius
 
 	for y := 0; y < iconSize; y++ {
-		dy := float64(y) - center
 		for x := 0; x < iconSize; x++ {
-			dx := float64(x) - center
+			px := float64(x) + 0.5
+			py := float64(y) + 0.5
+			if px < left || px > right || py < top || py > bottom {
+				continue
+			}
+			if px >= left+cornerRadius && px <= right-cornerRadius {
+				img.SetNRGBA(x, y, dot)
+				continue
+			}
+			if py >= top+cornerRadius && py <= bottom-cornerRadius {
+				img.SetNRGBA(x, y, dot)
+				continue
+			}
+
+			cx := left + cornerRadius
+			if px > right-cornerRadius {
+				cx = right - cornerRadius
+			}
+			cy := top + cornerRadius
+			if py > bottom-cornerRadius {
+				cy = bottom - cornerRadius
+			}
+			dx := px - cx
+			dy := py - cy
 			if dx*dx+dy*dy <= r2 {
 				img.SetNRGBA(x, y, dot)
 			}
