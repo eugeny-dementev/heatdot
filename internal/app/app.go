@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 	"runtime"
 	"strings"
 	"sync"
@@ -257,7 +258,13 @@ func (a *App) ensureAutostart(enabled bool) {
 	a.autostartEnabled = enabled
 	a.autostartMu.Unlock()
 
-	if err := util.EnsureAutostart("Heatdot", enabled); err != nil {
+	exePath, err := os.Executable()
+	if err != nil {
+		a.logger.Printf("autostart update: enabled=%t exe=unknown err=%v", enabled, err)
+		return
+	}
+	a.logger.Printf("autostart update: enabled=%t exe=%s", enabled, exePath)
+	if err := util.EnsureAutostartWithPath("Heatdot", enabled, exePath); err != nil {
 		a.logger.Printf("autostart update failed: %v", err)
 	}
 }

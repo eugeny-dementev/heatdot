@@ -18,6 +18,8 @@ func main() {
 
 	logFile := flag.String("log-file", "", "Path to log file")
 	debug := flag.Bool("debug", false, "Enable debug logging")
+	installAutostart := flag.Bool("install-autostart-task", false, "Install autostart task and exit")
+	removeAutostart := flag.Bool("remove-autostart-task", false, "Remove autostart task and exit")
 	flag.Parse()
 
 	logger := log.New(os.Stdout, "", log.LstdFlags)
@@ -43,6 +45,20 @@ func main() {
 				logger.SetOutput(io.MultiWriter(os.Stdout, file))
 			}
 		}
+	}
+
+	if *installAutostart || *removeAutostart {
+		exePath, err := os.Executable()
+		if err != nil {
+			logger.Printf("failed to resolve executable: %v", err)
+			os.Exit(1)
+		}
+		enabled := *installAutostart && !*removeAutostart
+		if err := util.EnsureAutostartWithPathNoElevate("Heatdot", enabled, exePath); err != nil {
+			logger.Printf("autostart task update failed: %v", err)
+			os.Exit(1)
+		}
+		return
 	}
 
 	var debugOverride *bool

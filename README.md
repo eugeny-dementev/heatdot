@@ -28,7 +28,7 @@ Notes:
 - `timezone` can be `local` or any IANA timezone (e.g., `America/Los_Angeles`).
 - If the config is missing, use the tray menu "Settings..." to generate a template.
 - Optional: `debug` (true/false) enables verbose logging.
-- Optional: `autostart` (true/false) enables Windows startup via the Run registry key.
+- Optional: `autostart` (true/false) enables Windows startup via Task Scheduler (10s delay after logon).
 
 ## Build
 ```bash
