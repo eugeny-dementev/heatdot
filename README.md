@@ -19,7 +19,8 @@ Example:
 {
   "profile_url": "https://github.com/<username>",
   "refresh_minutes": 10,
-  "timezone": "local"
+  "timezone": "local",
+  "autostart": false
 }
 ```
 
@@ -27,6 +28,7 @@ Notes:
 - `timezone` can be `local` or any IANA timezone (e.g., `America/Los_Angeles`).
 - If the config is missing, use the tray menu "Settings..." to generate a template.
 - Optional: `debug` (true/false) enables verbose logging.
+- Optional: `autostart` (true/false) enables Windows startup via the Run registry key.
 
 ## Build
 ```bash

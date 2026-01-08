@@ -15,6 +15,7 @@ type Config struct {
 	RefreshMinutes int    `json:"refresh_minutes"`
 	Timezone       string `json:"timezone"`
 	Debug          bool   `json:"debug"`
+	Autostart      bool   `json:"autostart"`
 }
 
 func Default() Config {
@@ -23,6 +24,7 @@ func Default() Config {
 		RefreshMinutes: 10,
 		Timezone:       "local",
 		Debug:          false,
+		Autostart:      false,
 	}
 }
 

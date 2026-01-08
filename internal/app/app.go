@@ -40,6 +40,10 @@ type App struct {
 
 	intervalMu      sync.Mutex
 	refreshInterval time.Duration
+
+	autostartMu      sync.Mutex
+	autostartSet     bool
+	autostartEnabled bool
 }
 
 type Options struct {
@@ -223,6 +227,7 @@ func (a *App) setConfig(cfg config.Config) {
 		interval = 10 * time.Minute
 	}
 	a.setInterval(interval)
+	a.ensureAutostart(cfg.Autostart)
 }
 
 func (a *App) setInterval(interval time.Duration) {
@@ -235,6 +240,25 @@ func (a *App) getInterval() time.Duration {
 	a.intervalMu.Lock()
 	defer a.intervalMu.Unlock()
 	return a.refreshInterval
+}
+
+func (a *App) ensureAutostart(enabled bool) {
+	if runtime.GOOS != "windows" {
+		return
+	}
+
+	a.autostartMu.Lock()
+	if a.autostartSet && a.autostartEnabled == enabled {
+		a.autostartMu.Unlock()
+		return
+	}
+	a.autostartSet = true
+	a.autostartEnabled = enabled
+	a.autostartMu.Unlock()
+
+	if err := util.EnsureAutostart("Heatdot", enabled); err != nil {
+		a.logger.Printf("autostart update failed: %v", err)
+	}
 }
 
 func (a *App) setSuccessState(count int) {
