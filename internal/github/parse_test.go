@@ -46,6 +46,32 @@ func TestParseCountAriaNoContrib(t *testing.T) {
 	}
 }
 
+func TestParseCountTooltip(t *testing.T) {
+	html := readFixture(t, "tooltip.html")
+	date := time.Date(2024, 9, 5, 9, 0, 0, 0, time.Local)
+
+	count, err := ParseCountForDate(html, date)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if count != 9 {
+		t.Fatalf("expected 9, got %d", count)
+	}
+}
+
+func TestParseCountTooltipNoContrib(t *testing.T) {
+	html := readFixture(t, "tooltip.html")
+	date := time.Date(2024, 9, 6, 9, 0, 0, 0, time.Local)
+
+	count, err := ParseCountForDate(html, date)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if count != 0 {
+		t.Fatalf("expected 0, got %d", count)
+	}
+}
+
 func readFixture(t *testing.T, name string) []byte {
 	t.Helper()
 	path := filepath.Join("testdata", name)
