@@ -22,9 +22,6 @@ jobs:
         with:
           go-version-file: go.mod
 
-      - name: Install Linux tray dependencies
-        run: sudo apt-get update && sudo apt-get install -y libgtk-3-dev libayatana-appindicator3-dev
-
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v6
         with:
@@ -32,30 +29,3 @@ jobs:
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  goreleaser_macos:
-    runs-on: macos-latest
-    needs: goreleaser
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Set up Go
-        uses: actions/setup-go@v5
-        with:
-          go-version-file: go.mod
-
-      - name: Build macOS artifacts
-        uses: goreleaser/goreleaser-action@v6
-        with:
-          version: latest
-          args: release --clean --skip=publish --config .goreleaser.darwin.yaml
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload macOS artifacts
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release upload "${{ github.ref_name }}" dist/*.tar.gz --clobber
