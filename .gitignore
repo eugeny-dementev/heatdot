@@ -1,0 +1,22 @@
+# Binaries
+*.exe
+*.exe~
+*.out
+
+# Build output
+/bin/
+/build/
+/dist/
+
+# Logs
+*.log
+
+# Local config/testing artifacts
+config.json
+
+# Go test binaries
+*.test
+
+# Editor/project files
+.idea/
+.vscode/
