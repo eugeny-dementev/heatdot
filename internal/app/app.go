@@ -83,7 +83,7 @@ func newApp(opts Options) *App {
 
 func (a *App) onReady() {
 	a.cfgPath = configPathFallback(a.logger)
-	a.setIconError()
+	a.setIconEmpty()
 	systray.SetTitle("Heatdot")
 	systray.SetTooltip("Heatdot — starting...")
 
@@ -298,11 +298,20 @@ func (a *App) setNeedsConfig() {
 	systray.SetTooltip("Heatdot: configure profile_url")
 	a.menuToday.SetTitle("Today: --")
 	a.menuProfile.Disable()
-	a.setIconError()
+	a.setIconEmpty()
 }
 
 func (a *App) setIconError() {
 	iconBytes, err := icon.ForError()
+	if err != nil {
+		a.logger.Printf("icon error: %v", err)
+		return
+	}
+	systray.SetIcon(iconBytes)
+}
+
+func (a *App) setIconEmpty() {
+	iconBytes, err := icon.ForCount(0)
 	if err != nil {
 		a.logger.Printf("icon error: %v", err)
 		return

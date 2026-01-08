@@ -41,7 +41,7 @@ func colorForCount(count int) color.NRGBA {
 	case count >= 7 && count <= 9:
 		return mustHexColor(colorHigh)
 	default:
-		return mustHexColor(colorEmpty)
+		return mustHexColor(colorMax)
 	}
 }
 
