@@ -12,10 +12,10 @@ import (
 
 const (
 	colorEmpty   = "#2c303b"
-	colorLow     = "#216e39"
-	colorMid     = "#30a14e"
-	colorHigh    = "#40c463"
-	colorMax     = "#9be9a8"
+	colorLow     = "#2b4624"
+	colorMid     = "#426935"
+	colorHigh    = "#629350"
+	colorMax     = "#89c274"
 	colorError   = "#ff0000"
 	iconSize     = 32
 	squareSize   = 20.0
